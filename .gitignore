@@ -137,3 +137,11 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Misc
+.DS_Store
+**.DS_Store
+
+# Ponder
+/generated/
+/.ponder*

@@ -3,7 +3,6 @@
 	"version": "0.0.1",
 	"private": false,
 	"license": "GPL-3.0",
-	"type": "module",
 	"scripts": {
 		"dev": "yarn install && ponder dev --disable-ui",
 		"dev:ui": "ponder dev",

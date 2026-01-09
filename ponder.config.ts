@@ -19,10 +19,10 @@ export const config = {
 		maxRequestsPerSecond: parseInt(
 			process.env.MAX_REQUESTS_PER_SECOND || '50'
 		),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL || '5000'),
+		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 
 		// block numbers
-		startUsdu: 0,
+		startUsdu: 22843900,
 	},
 
 	// multichain support
@@ -31,49 +31,49 @@ export const config = {
 		maxRequestsPerSecond: parseInt(
 			process.env.MAX_REQUESTS_PER_SECOND || '50'
 		),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL || '5000'),
+		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 	},
 	[arbitrum.id]: {
 		rpc: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
 		maxRequestsPerSecond: parseInt(
 			process.env.MAX_REQUESTS_PER_SECOND || '50'
 		),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL || '5000'),
+		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 	},
 	[optimism.id]: {
 		rpc: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
 		maxRequestsPerSecond: parseInt(
 			process.env.MAX_REQUESTS_PER_SECOND || '50'
 		),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL || '5000'),
+		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 	},
 	[base.id]: {
 		rpc: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
 		maxRequestsPerSecond: parseInt(
 			process.env.MAX_REQUESTS_PER_SECOND || '50'
 		),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL || '5000'),
+		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 	},
 	[avalanche.id]: {
 		rpc: `https://avax-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
 		maxRequestsPerSecond: parseInt(
 			process.env.MAX_REQUESTS_PER_SECOND || '50'
 		),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL || '5000'),
+		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 	},
 	[gnosis.id]: {
 		rpc: `https://gnosis-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
 		maxRequestsPerSecond: parseInt(
 			process.env.MAX_REQUESTS_PER_SECOND || '50'
 		),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL || '5000'),
+		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 	},
 	[sonic.id]: {
 		rpc: `https://sonic-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
 		maxRequestsPerSecond: parseInt(
 			process.env.MAX_REQUESTS_PER_SECOND || '50'
 		),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL || '5000'),
+		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 	},
 };
 
