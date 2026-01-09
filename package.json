@@ -1,0 +1,41 @@
+{
+	"name": "@usdu-finance/indexer",
+	"version": "0.0.1",
+	"private": false,
+	"license": "GPL-3.0",
+	"type": "module",
+	"scripts": {
+		"dev": "yarn install && ponder dev --disable-ui",
+		"dev:ui": "ponder dev",
+		"start": "ponder start",
+		"db": "ponder db",
+		"codegen": "ponder codegen",
+		"lint": "eslint .",
+		"typecheck": "tsc"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/usdu-finance/indexer"
+	},
+	"keywords": [],
+	"bugs": {
+		"url": "https://github.com/usdu-finance/indexer/issues"
+	},
+	"homepage": "https://github.com/usdu-finance/indexer#readme",
+	"dependencies": {
+		"@usdu-finance/usdu-core": "^0.0.5",
+		"hono": "^4.6.14",
+		"ponder": "^0.15.17",
+		"viem": "^2.21.3"
+	},
+	"devDependencies": {
+		"@types/node": "^20.9.0",
+		"eslint": "^8.53.0",
+		"eslint-config-ponder": "^0.15.17",
+		"tsx": "^4.21.0",
+		"typescript": "^5.2.2"
+	},
+	"engines": {
+		"node": ">=18.14"
+	}
+}
