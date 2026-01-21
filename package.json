@@ -22,7 +22,7 @@
 	},
 	"homepage": "https://github.com/usdu-finance/indexer#readme",
 	"dependencies": {
-		"@usdu-finance/usdu-core": "^0.0.5",
+		"@usdu-finance/usdu-core": "^0.0.7",
 		"hono": "^4.6.14",
 		"ponder": "^0.15.17",
 		"viem": "^2.21.3"
