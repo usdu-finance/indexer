@@ -1,2 +1,2 @@
 export * from './schema/stablecoin';
-// export * from './schema/erc20';
+export * from './schema/erc20';
