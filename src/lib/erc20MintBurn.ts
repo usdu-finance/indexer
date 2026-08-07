@@ -1,17 +1,8 @@
 import { Event, type Context } from 'ponder:registry';
-import {
-	ERC20Burn,
-	ERC20Status,
-	ERC20Mint,
-	ERC20BalanceMapping,
-	ERC20TotalSupply,
-} from 'ponder:schema';
+import { ERC20Burn, ERC20Status, ERC20Mint, ERC20BalanceMapping, ERC20TotalSupply } from 'ponder:schema';
 import { Address, zeroAddress } from 'viem';
 
-export async function indexERC20MintBurn(
-	event: Event<'ERC20:Transfer'>,
-	context: Context<'ERC20:Transfer'>,
-) {
+export async function indexERC20MintBurn(event: Event<'ERC20:Transfer'>, context: Context<'ERC20:Transfer'>) {
 	const token = event.log.address.toLowerCase() as Address;
 	const from = event.args.from.toLowerCase() as Address;
 	const to = event.args.to.toLowerCase() as Address;
@@ -20,8 +11,7 @@ export async function indexERC20MintBurn(
 	const chainId = context.chain.id;
 
 	// format: in seconds, same as blockchain timestamp
-	const date =
-		new Date(Number(updated * 1000n)).setUTCHours(0, 0, 0, 0) / 1000;
+	const date = new Date(Number(updated * 1000n)).setUTCHours(0, 0, 0, 0) / 1000;
 
 	let kindContract: string = 'Token';
 
@@ -57,11 +47,9 @@ export async function indexERC20MintBurn(
 		});
 
 		// update status
-		const responseStatus = await context.db
-			.update(ERC20Status, { chainId, token })
-			.set((current) => ({
-				supply: current.supply + value,
-			}));
+		const responseStatus = await context.db.update(ERC20Status, { chainId, token }).set((current) => ({
+			supply: current.supply + value,
+		}));
 
 		// flat total supply
 		await context.db
@@ -125,11 +113,9 @@ export async function indexERC20MintBurn(
 		});
 
 		// update status
-		const responseStatus = await context.db
-			.update(ERC20Status, { chainId, token })
-			.set((current) => ({
-				supply: current.supply - value,
-			}));
+		const responseStatus = await context.db.update(ERC20Status, { chainId, token }).set((current) => ({
+			supply: current.supply - value,
+		}));
 
 		// flat total supply
 		await context.db

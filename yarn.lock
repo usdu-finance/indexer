@@ -536,10 +536,10 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@ponder/utils@0.2.16":
-  version "0.2.16"
-  resolved "https://registry.yarnpkg.com/@ponder/utils/-/utils-0.2.16.tgz#bc96c7f3e7a31af18f35fac2e67df5e383cd53a6"
-  integrity sha512-Q2TpJ1BywdZhGDjtWe6mDQXn/jF2YDfMwdblDytwGjQ6zuFyuujP+o/liVbuHfqSYmeUOPHugxk5yKAhHwWfJw==
+"@ponder/utils@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@ponder/utils/-/utils-0.3.0.tgz#f50dd63084fb3ba5cee038e402e07429495458ed"
+  integrity sha512-7FmIHAKG1mfHA9ptaqN0h9bfYRnqBGAFDfEgXsXS4rxAg513gVR8hGsp1AZon+OPUtIpNRrmhx7bsEk8auiqow==
 
 "@repeaterjs/repeater@^3.0.4":
   version "3.0.6"
@@ -1240,10 +1240,10 @@ escape-string-regexp@^4.0.0:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz#14ba83a5d373e3d311e5afca29cf5bfad965bf34"
   integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
 
-eslint-config-ponder@^0.15.17:
-  version "0.15.17"
-  resolved "https://registry.yarnpkg.com/eslint-config-ponder/-/eslint-config-ponder-0.15.17.tgz#2c65e37a98fc00af9b82afbe80ec43bc4cda4fca"
-  integrity sha512-UWu3nMqyG8TsL5gdoMAvmzdZHR01jv/M1Ps31af+riHY/s267QLaBvD8qXpV0497bmDg598Y7RTMGzFksKyU9w==
+eslint-config-ponder@^0.17.5:
+  version "0.17.5"
+  resolved "https://registry.yarnpkg.com/eslint-config-ponder/-/eslint-config-ponder-0.17.5.tgz#78f0b5e6888c0df0ebbda21ee6ed525d5dfe30d1"
+  integrity sha512-lMOOjY14Pefgl/W1E+kr3hxPJHLbCXZskTCpfsWr4yQOmRWmv8HePcV1YTGxUduHOssHHP00D9MSRUz6M2Gq3A==
 
 eslint-scope@^7.2.2:
   version "7.2.2"
@@ -1899,10 +1899,10 @@ optionator@^0.9.3:
     type-check "^0.4.0"
     word-wrap "^1.2.5"
 
-ox@0.11.1:
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/ox/-/ox-0.11.1.tgz#ee1d1b88e794533db244e90bf7fb3863293169f3"
-  integrity sha512-1l1gOLAqg0S0xiN1dH5nkPna8PucrZgrIJOfS49MLNiMevxu07Iz4ZjuJS9N+xifvT+PsZyIptS7WHM8nC+0+A==
+ox@0.14.33:
+  version "0.14.33"
+  resolved "https://registry.yarnpkg.com/ox/-/ox-0.14.33.tgz#977ab8c0692fa9240444d7db88ca026f19f81e28"
+  integrity sha512-rooA/4o7bBof4Ge2VH/eovfNPb/AEEYyrNj03wggc55g5HZD8Pjs/OeWhttgjic3dDcqn0r29bDuvQEdTiUemQ==
   dependencies:
     "@adraffy/ens-normalize" "^1.11.0"
     "@noble/ciphers" "^1.3.0"
@@ -1986,12 +1986,17 @@ pathe@^1.1.1:
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-1.1.2.tgz#6c4cb47a945692e48a1ddd6e4094d170516437ec"
   integrity sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==
 
-pg-cloudflare@^1.2.7:
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/pg-cloudflare/-/pg-cloudflare-1.2.7.tgz#a1f3d226bab2c45ae75ea54d65ec05ac6cfafbef"
-  integrity sha512-YgCtzMH0ptvZJslLM1ffsY4EuGaU0cx4XSdXLRFae8bPP4dS5xL1tNB3k2o/N64cHJpwU7dxKli/nZ2lUa5fLg==
+pg-cloudflare@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/pg-cloudflare/-/pg-cloudflare-1.4.0.tgz#4b4c20e6d8ae531d400730f4804571a8d62f1497"
+  integrity sha512-Vo7z/6rrQYxpNRylp4Tlob2elzbh+N/MOQbxFVWCxS7oEx6jF53GTJFxK2WWpKuBRkmiin4Mt+xofFDjx09R0A==
 
-pg-connection-string@^2.6.2, pg-connection-string@^2.9.1:
+pg-connection-string@^2.14.0:
+  version "2.14.0"
+  resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.14.0.tgz#abc26ee4f37c56c0f3ae0fcf0b0653cc4e1c0fd9"
+  integrity sha512-XwWDGcLRGCXAR8F/AM5bG7Q+A3Wm2s6QeEjlOKZLlH3UYcguiqCWKyWXVag5TLTIjR7oOJUY8kcADaZgWPyLeg==
+
+pg-connection-string@^2.6.2:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.9.1.tgz#bb1fd0011e2eb76ac17360dc8fa183b2d3465238"
   integrity sha512-nkc6NpDcvPVpZXxrreI/FOtX3XemeLl8E0qFr6F2Lrm/I8WOnaWNhIPK2Z7OHpw7gh5XJThi6j6ppgNoaT1w4w==
@@ -2008,15 +2013,15 @@ pg-int8@1.0.1:
   resolved "https://registry.yarnpkg.com/pg-int8/-/pg-int8-1.0.1.tgz#943bd463bf5b71b4170115f80f8efc9a0c0eb78c"
   integrity sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==
 
-pg-pool@^3.10.1:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.10.1.tgz#481047c720be2d624792100cac1816f8850d31b2"
-  integrity sha512-Tu8jMlcX+9d8+QVzKIvM/uJtp07PKr82IUOYEphaWcoBhIYkoHpLXN3qO59nAI11ripznDsEzEv8nUxBVWajGg==
+pg-pool@^3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.14.0.tgz#f35ae4eb846780cad71af24099b3edfa9781ad90"
+  integrity sha512-gKtPkFdQPU3DksooVLi9LsjZxrsBUZIpa+7aVx+LV5pNh0KzP4Zleud2po+ConrxbuXGBJ6Hfer6hdgpIBpBaw==
 
-pg-protocol@^1.10.3:
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.10.3.tgz#ac9e4778ad3f84d0c5670583bab976ea0a34f69f"
-  integrity sha512-6DIBgBQaTKDJyxnXaLiLR8wBpQQcGWuAESkRBX/t6OwA8YsqP+iVSiond2EDy6Y/dsGk8rh/jtax3js5NeV7JQ==
+pg-protocol@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.15.0.tgz#758f6c0679cc0bbf4938603b7597703f333180c0"
+  integrity sha512-cq9sECI5s0+uPUXjbz8ioyPJni6RzsRib0US67i5IoTZKw8fNeYlVE7u8F4dG7vEJJtc5wdD1K189lCCUwqWTQ==
 
 pg-query-emscripten@5.1.0:
   version "5.1.0"
@@ -2034,18 +2039,18 @@ pg-types@2.2.0:
     postgres-date "~1.0.4"
     postgres-interval "^1.1.0"
 
-pg@^8.11.3:
-  version "8.16.3"
-  resolved "https://registry.yarnpkg.com/pg/-/pg-8.16.3.tgz#160741d0b44fdf64680e45374b06d632e86c99fd"
-  integrity sha512-enxc1h0jA/aq5oSDMvqyW3q89ra6XIIDZgCX9vkMrnz5DFTw/Ny3Li2lFQ+pt3L6MCgm/5o2o8HW9hiJji+xvw==
+pg@^8.16.2:
+  version "8.22.0"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-8.22.0.tgz#55ca3975026180c6dced6eec3a20a844c2dc9237"
+  integrity sha512-8wih1vVIBMxoUM2oB4soJsD9tDnDpLv4OXBJ+EJzFsvycD+lfyIreC2gGHq78f8jbLLt+bvlPTFdFZfJkOuzAA==
   dependencies:
-    pg-connection-string "^2.9.1"
-    pg-pool "^3.10.1"
-    pg-protocol "^1.10.3"
+    pg-connection-string "^2.14.0"
+    pg-pool "^3.14.0"
+    pg-protocol "^1.15.0"
     pg-types "2.2.0"
     pgpass "1.0.5"
   optionalDependencies:
-    pg-cloudflare "^1.2.7"
+    pg-cloudflare "^1.4.0"
 
 pgpass@1.0.5:
   version "1.0.5"
@@ -2089,10 +2094,10 @@ pino@^8.16.2:
     sonic-boom "^3.7.0"
     thread-stream "^2.6.0"
 
-ponder@^0.15.17:
-  version "0.15.17"
-  resolved "https://registry.yarnpkg.com/ponder/-/ponder-0.15.17.tgz#0466a25915e07eb127751c102d91e43de623511b"
-  integrity sha512-yCZBFHqi0VGeOSfxE5fKS8pKLdhStUC1g0otwm/mPcF6uRqprKZyCKtVmP13H64MppyGCkIxWNdxpS1U8+fCEg==
+ponder@^0.17.5:
+  version "0.17.5"
+  resolved "https://registry.yarnpkg.com/ponder/-/ponder-0.17.5.tgz#31ae78387e55f3d0e29dcd4c29f0a35ba0786d5c"
+  integrity sha512-IYzFDFKKwPPbzeudtMYZMoPIl07RtAwOvkXq2JGCZVjOJwYnk3miU7nd/8PYpxhC92rjTP+QsZy5kvfioQJhhg==
   dependencies:
     "@babel/code-frame" "^7.23.4"
     "@commander-js/extra-typings" "^12.0.1"
@@ -2101,7 +2106,7 @@ ponder@^0.15.17:
     "@escape.tech/graphql-armor-max-depth" "^2.2.0"
     "@escape.tech/graphql-armor-max-tokens" "^2.3.0"
     "@hono/node-server" "1.19.5"
-    "@ponder/utils" "0.2.16"
+    "@ponder/utils" "0.3.0"
     abitype "^0.10.2"
     ansi-escapes "^7.0.0"
     commander "^12.0.0"
@@ -2115,7 +2120,7 @@ ponder@^0.15.17:
     graphql-yoga "5.17.1"
     http-terminator "^3.2.0"
     kysely "^0.26.3"
-    pg "^8.11.3"
+    pg "^8.16.2"
     pg-connection-string "^2.6.2"
     pg-copy-streams "^6.0.6"
     pg-query-emscripten "5.1.0"
@@ -2167,7 +2172,7 @@ prelude-ls@^1.2.1:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
-prettier@^2.3.1:
+prettier@^2.3.1, prettier@^2.8.8:
   version "2.8.8"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
   integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
@@ -2584,7 +2589,7 @@ typechain@^8.3.2:
     ts-command-line-args "^2.2.0"
     ts-essentials "^7.0.1"
 
-typescript@^5.2.2, typescript@^5.8.3:
+typescript@^5.4.0, typescript@^5.8.3:
   version "5.9.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.3.tgz#5b4f59e15310ab17a216f5d6cf53ee476ede670f"
   integrity sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==
@@ -2636,10 +2641,10 @@ urlpattern-polyfill@^10.0.0:
   resolved "https://registry.yarnpkg.com/urlpattern-polyfill/-/urlpattern-polyfill-10.1.0.tgz#1b2517e614136c73ba32948d5e7a3a063cba8e74"
   integrity sha512-IGjKp/o0NL3Bso1PymYURCJxMPNAf/ILOpendP9f5B6e1rTJgdgiOvgfoT8VxCAdY+Wisb9uhGaJJf3yZ2V9nw==
 
-viem@^2.21.3:
-  version "2.43.5"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.43.5.tgz#450529892ee106132e9aa45bfc11e2641624190f"
-  integrity sha512-QuJpuEMEPM3EreN+vX4mVY68Sci0+zDxozYfbh/WfV+SSy/Gthm74PH8XmitXdty1xY54uTCJ+/Gbbd1IiMPSA==
+viem@^2.35.0:
+  version "2.55.11"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.55.11.tgz#50aba8e3a686866549e090f111026375d85d914b"
+  integrity sha512-RR5MwtdUnFfqw6ZGoFptizywyLOkLuhTL7UafoP3Irf2upXpANakQkLgGqY4H7A7+8JBxjUs6lElGF5zuGjMEw==
   dependencies:
     "@noble/curves" "1.9.1"
     "@noble/hashes" "1.8.0"
@@ -2647,8 +2652,8 @@ viem@^2.21.3:
     "@scure/bip39" "1.6.0"
     abitype "1.2.3"
     isows "1.0.7"
-    ox "0.11.1"
-    ws "8.18.3"
+    ox "0.14.33"
+    ws "8.21.0"
 
 vite-node@1.0.2:
   version "1.0.2"
@@ -2729,7 +2734,12 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-ws@8.18.3, ws@^8.18.3:
+ws@8.21.0:
+  version "8.21.0"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.21.0.tgz#012e413fc07429945121b0c153158c4343086951"
+  integrity sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==
+
+ws@^8.18.3:
   version "8.18.3"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.18.3.tgz#b56b88abffde62791c639170400c93dcb0c95472"
   integrity sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==

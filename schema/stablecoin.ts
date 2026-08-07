@@ -21,14 +21,9 @@ export const StablecoinModuleHistory = onchainTable(
 	}),
 	(table) => ({
 		pk: primaryKey({
-			columns: [
-				table.chainId,
-				table.module,
-				table.blockheight,
-				table.logIndex,
-			],
+			columns: [table.chainId, table.module, table.blockheight, table.logIndex],
 		}),
-	}),
+	})
 );
 
 export const StablecoinModuleMapping = onchainTable(
@@ -50,5 +45,5 @@ export const StablecoinModuleMapping = onchainTable(
 	}),
 	(table) => ({
 		pk: primaryKey({ columns: [table.chainId, table.module] }),
-	}),
+	})
 );
