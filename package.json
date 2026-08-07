@@ -10,7 +10,8 @@
 		"db": "ponder db",
 		"codegen": "ponder codegen",
 		"lint": "eslint .",
-		"typecheck": "tsc"
+		"typecheck": "tsc",
+		"format": "prettier --write ."
 	},
 	"repository": {
 		"type": "git",
@@ -31,6 +32,7 @@
 		"@types/node": "^20.9.0",
 		"eslint": "^8.53.0",
 		"eslint-config-ponder": "^0.17.5",
+		"prettier": "^2.8.8",
 		"tsx": "^4.21.0",
 		"typescript": "^5.4.0"
 	},
