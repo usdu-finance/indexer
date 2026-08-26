@@ -79,13 +79,13 @@ ponder.on('Stablecoin:SetModule', async ({ event, context }) => {
 		} else if (module == normalizeAddress('0xfb46481a9819e068af0eb64a2c2824fcecaaaa45')) {
 			return 'Morpho Core Vault - V1.2';
 		} else if (module == normalizeAddress('0x8f36bbee57acb4857cb97898020b529969fdf221')) {
-			return 'TermMax Core Vault - RV1';
+			return 'TermMax Core Vault - RecoveryV1';
 		} else if (module == normalizeAddress('0x77cbb2f180f55dd2916bfc78f879a2c2de37f638')) {
 			return 'Curve USDC Pool - V1.1';
 		} else if (module == normalizeAddress('0x397fb4a34757ac180c0841b26131f25040e2e50b')) {
-			return 'TermMax RWA Vault - RV1';
+			return 'TermMax RWA Vault - RecoveryV1';
 		} else if (module == normalizeAddress('0x5febefd5aecfefb3352c5edd49d634b1456c4bd7')) {
-			return 'TermMax Yield Vault - RV1';
+			return 'TermMax Yield Vault - RecoveryV1';
 		} else {
 			return message;
 		}
