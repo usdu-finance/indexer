@@ -1,5 +1,5 @@
 import { createConfig } from 'ponder';
-import { arbitrum, avalanche, base, gnosis, mainnet, optimism, polygon, sonic } from 'viem/chains';
+import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains';
 import { Chain, createPublicClient, erc20Abi, http } from 'viem';
 import { ADDRESS, Stablecoin_ABI } from '@usdu-finance/usdu-core';
 
@@ -32,21 +32,6 @@ export const config = {
 	},
 	[base.id]: {
 		rpc: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
-		maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
-	},
-	[avalanche.id]: {
-		rpc: `https://avax-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
-		maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
-	},
-	[gnosis.id]: {
-		rpc: `https://gnosis-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
-		maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
-	},
-	[sonic.id]: {
-		rpc: `https://sonic-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
 		maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
 		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
 	},
@@ -99,24 +84,7 @@ export default createConfig({
 			pollingInterval: config[base.id].pollingInterval,
 			rpc: http(config[base.id].rpc),
 		},
-		[avalanche.name]: {
-			id: avalanche.id,
-			maxRequestsPerSecond: config[avalanche.id].maxRequestsPerSecond,
-			pollingInterval: config[avalanche.id].pollingInterval,
-			rpc: http(config[avalanche.id].rpc),
-		},
-		[gnosis.name]: {
-			id: gnosis.id,
-			maxRequestsPerSecond: config[gnosis.id].maxRequestsPerSecond,
-			pollingInterval: config[gnosis.id].pollingInterval,
-			rpc: http(config[gnosis.id].rpc),
-		},
-		[sonic.name]: {
-			id: sonic.id,
-			maxRequestsPerSecond: config[sonic.id].maxRequestsPerSecond,
-			pollingInterval: config[sonic.id].pollingInterval,
-			rpc: http(config[sonic.id].rpc),
-		}, */
+	*/
 	},
 	contracts: {
 		// ### NATIVE CONTRACT ###
