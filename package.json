@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "yarn install && ponder dev --disable-ui",
 		"dev:ui": "ponder dev",
+		"build": "echo 'no build step required'",
 		"start": "ponder start",
 		"db": "ponder db",
 		"codegen": "ponder codegen",
