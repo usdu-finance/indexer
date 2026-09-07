@@ -15,26 +15,26 @@ export const config = {
 	},
 
 	// multichain support
-	[polygon.id]: {
-		rpc: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
-		maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
-	},
-	[arbitrum.id]: {
-		rpc: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
-		maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
-	},
-	[optimism.id]: {
-		rpc: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
-		maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
-	},
-	[base.id]: {
-		rpc: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
-		maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
-		pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
-	},
+	// [polygon.id]: {
+	// 	rpc: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
+	// 	maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
+	// 	pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
+	// },
+	// [arbitrum.id]: {
+	// 	rpc: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
+	// 	maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
+	// 	pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
+	// },
+	// [optimism.id]: {
+	// 	rpc: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
+	// 	maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
+	// 	pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
+	// },
+	// [base.id]: {
+	// 	rpc: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_RPC_KEY}`,
+	// 	maxRequestsPerSecond: parseInt(process.env.MAX_REQUESTS_PER_SECOND || '50'),
+	// 	pollingInterval: parseInt(process.env.POLLING_INTERVAL_MS || '5000'),
+	// },
 };
 
 export function getPublicClient(chain: Chain) {
