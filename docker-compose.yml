@@ -1,0 +1,65 @@
+services:
+    postgres:
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        networks:
+            - backend
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+
+    app:
+        image: node:22
+        command: bash -c "
+            git clone --depth=1 ${GIT_URL} /app &&
+            cd /app &&
+            git checkout ${GIT_BRANCH:-main} &&
+            yarn install --frozen-lockfile &&
+            yarn run build &&
+            yarn run start"
+        healthcheck:
+            test: ['CMD-SHELL', 'curl -f http://localhost:${VIRTUAL_PORT:-3000} || exit 1']
+            interval: 15s
+            timeout: 5s
+            retries: 3
+            start_period: 240s
+        deploy:
+            replicas: 1
+            update_config:
+                order: start-first
+                failure_action: rollback
+            restart_policy:
+                condition: on-failure
+        environment:
+            - GIT_URL=${GIT_URL}
+            - GIT_BRANCH=${GIT_BRANCH}
+            - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+            - VIRTUAL_HOST=${VIRTUAL_HOST}
+            - VIRTUAL_PORT=${VIRTUAL_PORT}
+            - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+            - PORT=${PORT:-3000}
+            - ALCHEMY_RPC_KEY=${ALCHEMY_RPC_KEY}
+            - MAX_REQUESTS_PER_SECOND=${MAX_REQUESTS_PER_SECOND}
+            - POLLING_INTERVAL_MS=${POLLING_INTERVAL_MS}
+        networks:
+            - backend
+            - frontend
+
+networks:
+    backend:
+        driver: overlay
+    frontend:
+        driver: overlay
+        attachable: true
