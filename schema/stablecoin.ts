@@ -4,6 +4,7 @@ export const StablecoinModuleHistory = onchainTable(
 	'StablecoinModuleHistory',
 	(t) => ({
 		chainId: t.integer().notNull(),
+		stablecoin: t.hex().notNull(),
 		txHash: t.hex().notNull(),
 		logIndex: t.integer().notNull(),
 		createdAt: t.bigint().notNull(),
@@ -21,7 +22,7 @@ export const StablecoinModuleHistory = onchainTable(
 	}),
 	(table) => ({
 		pk: primaryKey({
-			columns: [table.chainId, table.module, table.blockheight, table.logIndex],
+			columns: [table.chainId, table.stablecoin, table.module, table.blockheight, table.logIndex],
 		}),
 	})
 );
@@ -30,6 +31,7 @@ export const StablecoinModuleMapping = onchainTable(
 	'StablecoinModuleMapping',
 	(t) => ({
 		chainId: t.integer().notNull(),
+		stablecoin: t.hex().notNull(),
 		createdAt: t.bigint().notNull(),
 		module: t.hex().notNull(),
 		message: t.text().notNull(),
@@ -44,6 +46,6 @@ export const StablecoinModuleMapping = onchainTable(
 		updatedAt: t.bigint().notNull(),
 	}),
 	(table) => ({
-		pk: primaryKey({ columns: [table.chainId, table.module] }),
+		pk: primaryKey({ columns: [table.chainId, table.stablecoin, table.module] }),
 	})
 );

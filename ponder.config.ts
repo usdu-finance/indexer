@@ -92,7 +92,7 @@ export default createConfig({
 			abi: Stablecoin_ABI,
 			chain: {
 				[mainnet.name]: {
-					address: ADDRESS[mainnet.id].usduStable,
+					address: [ADDRESS[mainnet.id].usduStable, ADDRESS[mainnet.id].euruStable, ADDRESS[mainnet.id].chfuStable],
 					startBlock: config[mainnet.id].startUsdu,
 				},
 			},
@@ -109,7 +109,7 @@ export default createConfig({
 			abi: erc20Abi,
 			chain: {
 				[mainnet.name]: {
-					address: [ADDRESS[mainnet.id].usduStable],
+					address: [ADDRESS[mainnet.id].usduStable, ADDRESS[mainnet.id].euruStable, ADDRESS[mainnet.id].chfuStable],
 					startBlock: config[mainnet.id].startUsdu,
 				},
 			},
