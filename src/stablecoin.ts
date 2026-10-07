@@ -7,6 +7,7 @@ import { normalizeAddress } from './utils/format';
 ponder.on('Stablecoin:SubmitModule', async ({ event, context }) => {
 	await context.db.insert(StablecoinModuleHistory).values({
 		chainId: context.chain.id,
+		stablecoin: normalizeAddress(event.log.address),
 		txHash: event.transaction.hash,
 		logIndex: event.log.logIndex,
 		createdAt: BigInt(event.block.timestamp),
@@ -25,6 +26,7 @@ ponder.on('Stablecoin:SubmitModule', async ({ event, context }) => {
 ponder.on('Stablecoin:RevokePendingModule', async ({ event, context }) => {
 	await context.db.insert(StablecoinModuleHistory).values({
 		chainId: context.chain.id,
+		stablecoin: normalizeAddress(event.log.address),
 		txHash: event.transaction.hash,
 		logIndex: event.log.logIndex,
 		createdAt: BigInt(event.block.timestamp),
@@ -38,6 +40,8 @@ ponder.on('Stablecoin:RevokePendingModule', async ({ event, context }) => {
 });
 
 ponder.on('Stablecoin:SetModule', async ({ event, context }) => {
+	const stablecoin = normalizeAddress(event.log.address);
+
 	// Look up the corresponding SubmitModule proposal to get full details
 	const proposals = await context.db.sql
 		.select()
@@ -45,6 +49,7 @@ ponder.on('Stablecoin:SetModule', async ({ event, context }) => {
 		.where(
 			and(
 				eq(StablecoinModuleHistory.chainId, context.chain.id),
+				eq(StablecoinModuleHistory.stablecoin, stablecoin),
 				eq(StablecoinModuleHistory.module, event.args.newModule),
 				eq(StablecoinModuleHistory.kind, 'Proposed')
 			)
@@ -54,6 +59,7 @@ ponder.on('Stablecoin:SetModule', async ({ event, context }) => {
 
 	await context.db.insert(StablecoinModuleHistory).values({
 		chainId: context.chain.id,
+		stablecoin,
 		txHash: event.transaction.hash,
 		logIndex: event.log.logIndex,
 		createdAt: BigInt(event.block.timestamp),
@@ -86,6 +92,16 @@ ponder.on('Stablecoin:SetModule', async ({ event, context }) => {
 			return 'TermMax RWA Vault - RecoveryV1';
 		} else if (module == normalizeAddress('0x5febefd5aecfefb3352c5edd49d634b1456c4bd7')) {
 			return 'TermMax Yield Vault - RecoveryV1';
+		} else if (module == normalizeAddress('0x6b6893d82edbC8d6769ba3c407102D33dA2B623f')) {
+			return 'Swap Bridge V1 - steakUSDC';
+		} else if (module == normalizeAddress('0xd9141f634Ef9E871A5FE4f64195747DB77A13f3E')) {
+			return 'Swap Bridge V1 - steakUSDT';
+		} else if (module == normalizeAddress('0x83F263eF950586Ce3C35D58930f0d2001fe79c50')) {
+			return 'Swap Bridge V1 - steakEURC';
+		} else if (module == normalizeAddress('0xA39665F17592c69B6876CE70FdD12c1890D3ae36')) {
+			return 'Swap Bridge V1 - svDEURO';
+		} else if (module == normalizeAddress('0x19ff1079d9CdA8E415af4C95cFEb5A2f47Da1d15')) {
+			return 'Swap Bridge V1 - svZCHF';
 		} else {
 			return message;
 		}
@@ -95,6 +111,7 @@ ponder.on('Stablecoin:SetModule', async ({ event, context }) => {
 		// native module approved during stablecoin deployment
 		await context.db.insert(StablecoinModuleMapping).values({
 			chainId: context.chain.id,
+			stablecoin,
 			txHash: event.transaction.hash,
 			logIndex: event.log.logIndex,
 			createdAt: BigInt(event.block.timestamp),
@@ -113,6 +130,7 @@ ponder.on('Stablecoin:SetModule', async ({ event, context }) => {
 			.insert(StablecoinModuleMapping)
 			.values({
 				chainId: context.chain.id,
+				stablecoin,
 				txHash: event.transaction.hash,
 				logIndex: event.log.logIndex,
 				createdAt: BigInt(event.block.timestamp),
