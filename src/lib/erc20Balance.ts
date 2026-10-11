@@ -1,15 +1,16 @@
 import { Event, type Context } from 'ponder:registry';
 import { ERC20Balance, ERC20BalanceMapping, ERC20Status } from 'ponder:schema';
-import { Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
+import { normalizeAddress } from '../utils/format';
 
 export async function indexERC20Balance(
 	event: Event<'ERC20:Transfer' | 'ERC20PositionV1:Transfer' | 'ERC20PositionV2:Transfer'>,
 	context: Context<'ERC20:Transfer' | 'ERC20PositionV1:Transfer' | 'ERC20PositionV2:Transfer'>,
 	{ indexFrom = true, indexTo = true, indexEntry = true }: { indexFrom?: boolean; indexTo?: boolean; indexEntry?: boolean }
 ) {
-	const token = event.log.address.toLowerCase() as Address;
-	const from = event.args.from.toLowerCase() as Address;
-	const to = event.args.to.toLowerCase() as Address;
+	const token = normalizeAddress(event.log.address);
+	const from = normalizeAddress(event.args.from);
+	const to = normalizeAddress(event.args.to);
 	const value = event.args.value;
 	const updated = event.block.timestamp;
 	const chainId = context.chain.id;

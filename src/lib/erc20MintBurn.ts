@@ -1,11 +1,12 @@
 import { Event, type Context } from 'ponder:registry';
 import { ERC20Burn, ERC20Status, ERC20Mint, ERC20BalanceMapping, ERC20TotalSupply } from 'ponder:schema';
-import { Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
+import { normalizeAddress } from '../utils/format';
 
 export async function indexERC20MintBurn(event: Event<'ERC20:Transfer'>, context: Context<'ERC20:Transfer'>) {
-	const token = event.log.address.toLowerCase() as Address;
-	const from = event.args.from.toLowerCase() as Address;
-	const to = event.args.to.toLowerCase() as Address;
+	const token = normalizeAddress(event.log.address);
+	const from = normalizeAddress(event.args.from);
+	const to = normalizeAddress(event.args.to);
 	const value = event.args.value;
 	const updated = event.block.timestamp;
 	const chainId = context.chain.id;
