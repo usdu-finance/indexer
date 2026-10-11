@@ -1,7 +1,7 @@
 import { createConfig } from 'ponder';
 import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains';
 import { Chain, createPublicClient, erc20Abi, http } from 'viem';
-import { ADDRESS, Stablecoin_ABI } from '@usdu-finance/usdu-core';
+import { ADDRESS, IERC4626ABI, StreamerVaultV1_ABI, Stablecoin_ABI } from '@usdu-finance/usdu-core';
 
 export const config = {
 	// core deployment
@@ -109,8 +109,52 @@ export default createConfig({
 			abi: erc20Abi,
 			chain: {
 				[mainnet.name]: {
-					address: [ADDRESS[mainnet.id].usduStable, ADDRESS[mainnet.id].euruStable, ADDRESS[mainnet.id].chfuStable],
+					address: [
+						ADDRESS[mainnet.id].usduStable,
+						ADDRESS[mainnet.id].euruStable,
+						ADDRESS[mainnet.id].chfuStable,
+						ADDRESS[mainnet.id].usduStreamerVaultV1,
+						ADDRESS[mainnet.id].euruStreamerVaultV1,
+						ADDRESS[mainnet.id].chfuStreamerVaultV1,
+					],
 					startBlock: config[mainnet.id].startUsdu,
+				},
+			},
+		},
+		ERC4626: {
+			abi: IERC4626ABI,
+			chain: {
+				[mainnet.name]: {
+					address: [
+						ADDRESS[mainnet.id].usduStreamerVaultV1,
+						ADDRESS[mainnet.id].euruStreamerVaultV1,
+						ADDRESS[mainnet.id].chfuStreamerVaultV1,
+					],
+					startBlock: config[mainnet.id].startUsdu,
+				},
+			},
+		},
+		StreamerVaultV1: {
+			abi: StreamerVaultV1_ABI,
+			chain: {
+				[mainnet.name]: {
+					address: [
+						ADDRESS[mainnet.id].usduStreamerVaultV1,
+						ADDRESS[mainnet.id].euruStreamerVaultV1,
+						ADDRESS[mainnet.id].chfuStreamerVaultV1,
+					],
+					startBlock: config[mainnet.id].startUsdu,
+				},
+			},
+		},
+	},
+	blocks: {
+		// roughly daily at 12s blocks, snapshots are upserted per utc day
+		ERC4626Daily: {
+			chain: {
+				[mainnet.name]: {
+					startBlock: config[mainnet.id].startUsdu,
+					interval: 7200,
 				},
 			},
 		},
