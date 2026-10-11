@@ -12,6 +12,7 @@ export const config = {
 
 		// block numbers
 		startUsdu: 22843900,
+		startStreamerVaultV1: 26167986, // first deployment (rUSDU)
 	},
 
 	// multichain support
@@ -130,7 +131,7 @@ export default createConfig({
 						ADDRESS[mainnet.id].euruStreamerVaultV1,
 						ADDRESS[mainnet.id].chfuStreamerVaultV1,
 					],
-					startBlock: config[mainnet.id].startUsdu,
+					startBlock: config[mainnet.id].startStreamerVaultV1,
 				},
 			},
 		},
@@ -143,7 +144,7 @@ export default createConfig({
 						ADDRESS[mainnet.id].euruStreamerVaultV1,
 						ADDRESS[mainnet.id].chfuStreamerVaultV1,
 					],
-					startBlock: config[mainnet.id].startUsdu,
+					startBlock: config[mainnet.id].startStreamerVaultV1,
 				},
 			},
 		},
@@ -153,7 +154,7 @@ export default createConfig({
 		ERC4626Daily: {
 			chain: {
 				[mainnet.name]: {
-					startBlock: config[mainnet.id].startUsdu,
+					startBlock: config[mainnet.id].startStreamerVaultV1,
 					interval: 7200,
 				},
 			},

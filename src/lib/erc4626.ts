@@ -89,12 +89,14 @@ export async function indexERC4626Daily(event: Event<'ERC4626Daily:block'>, cont
 	const day = BigInt(timestampStartOfDay(Number(event.block.timestamp)));
 
 	for (const vault of vaults) {
-		// vault may not be deployed yet at the first blocks of the interval
+		// skip vaults that are not deployed yet at this block
+		const code = await context.client.getCode({ address: vault });
+		if (!code || code === '0x') continue;
+
 		const [totalAssets, totalSupply] = await Promise.all([
-			context.client.readContract({ abi: erc4626ReadAbi, address: vault, functionName: 'totalAssets' }).catch(() => undefined),
-			context.client.readContract({ abi: erc20Abi, address: vault, functionName: 'totalSupply' }).catch(() => undefined),
+			context.client.readContract({ abi: erc4626ReadAbi, address: vault, functionName: 'totalAssets' }),
+			context.client.readContract({ abi: erc20Abi, address: vault, functionName: 'totalSupply' }),
 		]);
-		if (totalAssets === undefined || totalSupply === undefined) continue;
 
 		const row = {
 			blockheight: event.block.number,
