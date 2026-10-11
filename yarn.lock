@@ -737,10 +737,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.3.0.tgz#d06bbb384ebcf6c505fde1c3d0ed4ddffe0aaff8"
   integrity sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==
 
-"@usdu-finance/usdu-core@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@usdu-finance/usdu-core/-/usdu-core-0.1.5.tgz#b0b848d0777789097706a41e8829ab41395be34d"
-  integrity sha512-DpKUZ/PdD6LCk9DZY12cC0XPHp7L6Au69SMg6cJ9JsfwaxL392dx6NJi0lTOqjIIwKGB0RAgBuK5kI0UNaBfUQ==
+"@usdu-finance/usdu-core@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@usdu-finance/usdu-core/-/usdu-core-0.1.6.tgz#a3435de978c53794b63ada963b9d35856961e34b"
+  integrity sha512-mfr91mqHC+2j26x6R/TZ52di/nz7gStBCr/yL3WARugEDs2IhdIrojsD3ImaGEz2iX1vkw3ShTUz4Im5YHlNKw==
   dependencies:
     "@typechain/ethers-v6" "^0.5.1"
     "@typechain/hardhat" "^9.1.0"
