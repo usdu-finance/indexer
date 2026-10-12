@@ -1,7 +1,14 @@
 import { createConfig } from 'ponder';
 import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains';
 import { Chain, createPublicClient, erc20Abi, http } from 'viem';
-import { ADDRESS, IERC4626ABI, StreamerVaultV1_ABI, Stablecoin_ABI } from '@usdu-finance/usdu-core';
+import {
+	ADDRESS,
+	IERC4626ABI,
+	ModuleRevenueV1_ABI,
+	StreamerVaultV1_ABI,
+	Stablecoin_ABI,
+	SwapBridgeMorphoV1_ABI,
+} from '@usdu-finance/usdu-core';
 
 export const config = {
 	// core deployment
@@ -13,6 +20,7 @@ export const config = {
 		// block numbers
 		startUsdu: 22843900,
 		startStreamerVaultV1: 26167986, // first deployment (rUSDU)
+		startModuleRevenueV1: 25718487, // first deployment (USDU steakUSDC module)
 	},
 
 	// multichain support
@@ -148,8 +156,47 @@ export default createConfig({
 				},
 			},
 		},
+		ModuleRevenueV1: {
+			abi: ModuleRevenueV1_ABI,
+			chain: {
+				[mainnet.name]: {
+					address: [
+						ADDRESS[mainnet.id].usduSwapBridgeMorphoV1_steakUSDC_module,
+						ADDRESS[mainnet.id].usduSwapBridgeMorphoV1_steakUSDT_module,
+						ADDRESS[mainnet.id].euruSwapBridgeMorphoV1_steakEURC_module,
+						ADDRESS[mainnet.id].euruSwapBridgeMorphoV1_dEURO_module,
+						ADDRESS[mainnet.id].chfuSwapBridgeMorphoV1_ZCHF_module,
+					],
+					startBlock: config[mainnet.id].startModuleRevenueV1,
+				},
+			},
+		},
+		SwapBridgeMorphoV1: {
+			abi: SwapBridgeMorphoV1_ABI,
+			chain: {
+				[mainnet.name]: {
+					address: [
+						ADDRESS[mainnet.id].usduSwapBridgeMorphoV1_steakUSDC_module,
+						ADDRESS[mainnet.id].usduSwapBridgeMorphoV1_steakUSDT_module,
+						ADDRESS[mainnet.id].euruSwapBridgeMorphoV1_steakEURC_module,
+						ADDRESS[mainnet.id].euruSwapBridgeMorphoV1_dEURO_module,
+						ADDRESS[mainnet.id].chfuSwapBridgeMorphoV1_ZCHF_module,
+					],
+					startBlock: config[mainnet.id].startModuleRevenueV1,
+				},
+			},
+		},
 	},
 	blocks: {
+		// roughly daily at 12s blocks, snapshots are upserted per utc day
+		ModuleRevenueV1Daily: {
+			chain: {
+				[mainnet.name]: {
+					startBlock: config[mainnet.id].startModuleRevenueV1,
+					interval: 7200,
+				},
+			},
+		},
 		// roughly daily at 12s blocks, snapshots are upserted per utc day
 		ERC4626Daily: {
 			chain: {

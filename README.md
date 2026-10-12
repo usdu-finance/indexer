@@ -15,12 +15,14 @@ src/
   api/index.ts         GraphQL and SQL endpoints
 ```
 
-| Domain            | Schema                      | Handlers                 | Indexes                                                                |
-| ----------------- | --------------------------- | ------------------------ | ---------------------------------------------------------------------- |
-| `stablecoin`      | `schema/stablecoin.ts`      | `src/stablecoin.ts`      | module proposals and mappings                                          |
-| `erc20`           | `schema/erc20.ts`           | `src/erc20.ts`           | mint/burn, supply, balances per account (stablecoins and vault shares) |
-| `erc4626`         | `schema/erc4626.ts`         | `src/erc4626.ts`         | deposit/withdraw history, positions (cost basis), daily snapshots      |
-| `streamerVaultV1` | `schema/streamerVaultV1.ts` | `src/streamerVaultV1.ts` | `Synced` events (reward streams)                                       |
+| Domain               | Schema                         | Handlers                    | Indexes                                                                     |
+| -------------------- | ------------------------------ | --------------------------- | --------------------------------------------------------------------------- |
+| `stablecoin`         | `schema/stablecoin.ts`         | `src/stablecoin.ts`         | module proposals and mappings                                               |
+| `erc20`              | `schema/erc20.ts`              | `src/erc20.ts`              | mint/burn, supply, balances per account (stablecoins and vault shares)      |
+| `erc4626`            | `schema/erc4626.ts`            | `src/erc4626.ts`            | deposit/withdraw history, positions (cost basis), daily snapshots           |
+| `streamerVaultV1`    | `schema/streamerVaultV1.ts`    | `src/streamerVaultV1.ts`    | `Synced` events (reward streams)                                            |
+| `moduleRevenueV1`    | `schema/moduleRevenueV1.ts`    | `src/moduleRevenueV1.ts`    | `Revenue` events, daily `totalMinted` / `totalRevenue` snapshots per module |
+| `swapBridgeMorphoV1` | `schema/swapBridgeMorphoV1.ts` | `src/swapBridgeMorphoV1.ts` | `SwapIn` / `SwapOut` history, daily volume and fees per module              |
 
 ## Conventions
 
