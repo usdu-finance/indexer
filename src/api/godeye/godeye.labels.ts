@@ -19,6 +19,7 @@ const CONFIG_KINDS: [RegExp, GodEyeKind][] = [
 
 /** module applications carry a free-text message, it tells what a module really is */
 const MODULE_KINDS: [RegExp, GodEyeKind][] = [
+	[/swap ?bridge/i, 'minter'],
 	[/saving|streamer|reward/i, 'savings'],
 	[/adapter|module/i, 'minter'],
 	[/curve|pool|swap ?router|uniswap/i, 'dex'],
