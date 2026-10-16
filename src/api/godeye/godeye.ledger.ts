@@ -1,6 +1,6 @@
 import { db } from 'ponder:api';
-import { ERC20Balance, ERC20Status } from 'ponder:schema';
-import { and, asc, eq, gt } from 'ponder';
+import { ERC20Balance, ERC20Status, ModuleRevenueV1Revenue, StablecoinModuleMapping, SwapBridgeMorphoV1Swap } from 'ponder:schema';
+import { and, asc, eq, gt, inArray } from 'ponder';
 import { ADDRESS } from '@usdu-finance/usdu-core';
 import { mainnet } from 'viem/chains';
 import { GodEyeTokenInfo } from './godeye.types';
@@ -28,6 +28,12 @@ export const TRACKED: { chainId: number; token: string; symbol: string }[] = [
 export const DEFAULT_TOKEN = 'USDU';
 
 const PAGE = 5000;
+/** max tx hashes per IN query */
+const IN_CHUNK = 1000;
+
+/** a module that caused (part of) the mints/burns of one transaction, with the stablecoin amounts it emitted */
+export type ModuleHit = { module: string; amounts: bigint[] };
+
 const E18 = 1e18;
 /** a refresh is triggered by a request once the ledgers are older than this */
 const STALE_MS = 30_000;
@@ -43,7 +49,7 @@ export class TokenLedger {
 	from!: Uint32Array;
 	to!: Uint32Array;
 	amt!: Float64Array;
-	/** 1 when the row was routed through an intermediary (unused for USDU, kept for contract compatibility) */
+	/** 0 plain transfer, 1 first and 2 second leg of a mint/burn routed through a module (mint: zero -> module -> recipient, burn: payer -> module -> zero) */
 	via!: Uint8Array;
 
 	lastCount = 0n;
@@ -124,6 +130,8 @@ export class GodEyeLedgers {
 	private lastRun = 0;
 	private lastError: string | null = null;
 	private everSynced = false;
+	/** `chainId:stablecoin:module` of every module registered on a stablecoin */
+	private registered = new Set<string>();
 
 	constructor(private readonly tracked = TRACKED) {
 		for (const t of tracked) this.ledgers.set(`${t.chainId}:${t.token}`, new TokenLedger(t.chainId, t.token, t.symbol));
@@ -214,6 +222,8 @@ export class GodEyeLedgers {
 
 	private async run() {
 		try {
+			const mapping = await db.select().from(StablecoinModuleMapping);
+			this.registered = new Set(mapping.map((m) => `${m.chainId}:${m.stablecoin.toLowerCase()}:${m.module.toLowerCase()}`));
 			const status = await db.select().from(ERC20Status);
 			for (const s of status) {
 				const l = this.ledgers.get(`${s.chainId}:${s.token.toLowerCase()}`);
@@ -233,20 +243,78 @@ export class GodEyeLedgers {
 		}
 	}
 
+	/**
+	 * Modules mint and burn directly (swap bridge: zero -> user, user -> zero), which would show as "Mint / Burn" flows.
+	 * Mints/burns of a transaction are attributed to the module that caused them, using the module's own indexed events
+	 * (swaps, revenue) and only if the module is registered on this very stablecoin. One IN query per table and page.
+	 */
+	private async moduleHits(l: TokenLedger, items: { txHash: string; from: string; to: string }[]): Promise<Map<string, ModuleHit[]>> {
+		const hits = new Map<string, ModuleHit[]>();
+		const hashes = [...new Set(items.filter((i) => i.from === ZERO || i.to === ZERO).map((i) => i.txHash.toLowerCase()))];
+		if (!hashes.length) return hits;
+		const add = (txHash: string, module: string, amounts: bigint[]) => {
+			module = module.toLowerCase();
+			if (!this.registered.has(`${l.chainId}:${l.token}:${module}`)) return;
+			const key = txHash.toLowerCase();
+			const list = hits.get(key) ?? [];
+			const hit = list.find((h) => h.module === module);
+			if (hit) hit.amounts.push(...amounts);
+			else list.push({ module, amounts });
+			hits.set(key, list);
+		};
+		for (let i = 0; i < hashes.length; i += IN_CHUNK) {
+			const chunk = hashes.slice(i, i + IN_CHUNK) as `0x${string}`[];
+			const swaps = await db
+				.select({ module: SwapBridgeMorphoV1Swap.module, txHash: SwapBridgeMorphoV1Swap.txHash, kind: SwapBridgeMorphoV1Swap.kind, amountStable: SwapBridgeMorphoV1Swap.amountStable, fee: SwapBridgeMorphoV1Swap.fee })
+				.from(SwapBridgeMorphoV1Swap)
+				.where(and(eq(SwapBridgeMorphoV1Swap.chainId, l.chainId), inArray(SwapBridgeMorphoV1Swap.txHash, chunk)));
+			// SwapIn mints (amount - fee) to the target and the fee to the curator, SwapOut burns the amount from the caller
+			for (const w of swaps) add(w.txHash, w.module, w.kind === 'SwapIn' ? [w.amountStable - w.fee, w.fee] : [w.amountStable]);
+			const revenue = await db
+				.select({ module: ModuleRevenueV1Revenue.module, txHash: ModuleRevenueV1Revenue.txHash, amount: ModuleRevenueV1Revenue.amount })
+				.from(ModuleRevenueV1Revenue)
+				.where(and(eq(ModuleRevenueV1Revenue.chainId, l.chainId), inArray(ModuleRevenueV1Revenue.txHash, chunk)));
+			for (const r of revenue) add(r.txHash, r.module, [r.amount]);
+		}
+		return hits;
+	}
+
+	/** appends transfer rows; mints/burns with a known module become two rows through the module so that it nets to zero */
+	ingest(
+		l: TokenLedger,
+		items: { count: bigint; txHash?: string; created: bigint; from: string; to: string; amount: bigint }[],
+		hits: Map<string, ModuleHit[]> = new Map()
+	) {
+		for (const it of items) {
+			const ts = Number(it.created);
+			const amount = Number(it.amount) / E18;
+			const cands = it.txHash && (it.from === ZERO || it.to === ZERO) ? hits.get(it.txHash.toLowerCase()) : undefined;
+			const hit = cands && (cands.find((h) => h.amounts.includes(it.amount)) ?? cands[0]);
+			const m = hit ? this.idOf(hit.module) : 0;
+			if (hit && it.from === ZERO && it.to !== ZERO) {
+				l.push(ts, 0, m, amount, 1);
+				l.push(ts, m, this.idOf(it.to), amount, 2);
+			} else if (hit && it.to === ZERO && it.from !== ZERO) {
+				l.push(ts, this.idOf(it.from), m, amount, 1);
+				l.push(ts, m, 0, amount, 2);
+			} else {
+				l.push(ts, this.idOf(it.from), this.idOf(it.to), amount);
+			}
+			l.lastCount = it.count;
+		}
+	}
+
 	private async syncLedger(l: TokenLedger) {
 		const before = l.n;
 		const started = Date.now();
 		for (;;) {
 			const items = await db
-				.select({ count: ERC20Balance.count, created: ERC20Balance.created, from: ERC20Balance.from, to: ERC20Balance.to, amount: ERC20Balance.amount })
+				.select({ count: ERC20Balance.count, txHash: ERC20Balance.txHash, created: ERC20Balance.created, from: ERC20Balance.from, to: ERC20Balance.to, amount: ERC20Balance.amount })
 				.from(ERC20Balance)
 				.where(and(eq(ERC20Balance.chainId, l.chainId), eq(ERC20Balance.token, l.token as `0x${string}`), gt(ERC20Balance.count, l.lastCount)))
 				.orderBy(asc(ERC20Balance.count))
 				.limit(PAGE);
-			for (const it of items) {
-				l.push(Number(it.created), this.idOf(it.from), this.idOf(it.to), Number(it.amount) / E18);
-				l.lastCount = it.count;
-			}
+			this.ingest(l, items, await this.moduleHits(l, items));
 			if (items.length < PAGE) break;
 		}
 		l.syncedAt = Math.floor(Date.now() / 1000);

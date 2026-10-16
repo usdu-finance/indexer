@@ -17,15 +17,6 @@ const CONFIG_KINDS: [RegExp, GodEyeKind][] = [
 	[/curator|dao|stable|multisig|delayed|distributor/i, 'contract'],
 ];
 
-/** module applications carry a free-text message, it tells what a module really is */
-const MODULE_KINDS: [RegExp, GodEyeKind][] = [
-	[/swap ?bridge/i, 'minter'],
-	[/saving|streamer|reward/i, 'savings'],
-	[/adapter|module/i, 'minter'],
-	[/curve|pool|swap ?router|uniswap/i, 'dex'],
-	[/bridge|morpho|vault|termmax/i, 'bridge'],
-];
-
 /** a resolved label, null when the address is unknown */
 export type ResolvedLabel = { label: string | null; kind: GodEyeKind };
 
@@ -92,9 +83,8 @@ export class GodEyeLabels {
 			for (const m of rows) {
 				const a = m.module.toLowerCase();
 				const msg = String(m.messageUpdated || m.message || '').replace(/\s+/g, ' ').trim().slice(0, 60);
-				const kind = MODULE_KINDS.find(([re]) => re.test(msg))?.[1] ?? 'minter';
-				const expired = m.expiredAt > 0n && Number(m.expiredAt) < now;
-				next.set(a, { label: `${msg || `Module ${a.slice(0, 8)}`}${expired ? ' (expired)' : ''}`, kind });
+								const expired = m.expiredAt > 0n && Number(m.expiredAt) < now;
+				next.set(a, { label: `${msg || `Module ${a.slice(0, 8)}`}${expired ? ' (expired)' : ''}`, kind: 'minter' });
 			}
 			this.dynamic = next;
 		} catch {

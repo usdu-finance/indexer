@@ -147,8 +147,11 @@ export class GodEyeService {
 				bal[0] += a;
 				burned += a;
 			}
-			volume += a;
-			transfers++;
+			// the second leg of a mint/burn routed through a module is the same movement, count it once
+			if (l.via[i] !== 2) {
+				volume += a;
+				transfers++;
+			}
 		}
 		emit(day);
 		this.timelineCache.set(l.key, { version: l.version, data: out });
@@ -345,7 +348,15 @@ export class GodEyeService {
 			}
 		}
 		candidates.sort((a, b) => score[b] - score[a]);
-		const picked = candidates.slice(0, focusId !== undefined ? top : top);
+		const picked = candidates.slice(0, top);
+		if (focusId === undefined) {
+			// modules that mint/burn on behalf of users net to zero balance and would vanish into "rest of network";
+			// keep the busiest ones (by routed volume in the window) so mint -> module -> user stays visible
+			const routed = new Map<number, number>();
+			for (let i = lo; i < hi; i++) if (l.via[i] === 1) routed.set(l.to[i], (routed.get(l.to[i]) || 0) + l.amt[i]);
+			const have = new Set(picked);
+			for (const [id] of [...routed.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20)) if (!have.has(id) && id !== 0) picked.push(id);
+		}
 		const slot = new Int32Array(N).fill(-1);
 		const ids: number[] = [];
 		const add = (id: number) => {
