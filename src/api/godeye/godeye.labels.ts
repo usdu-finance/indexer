@@ -11,17 +11,18 @@ const BOOK_KINDS: GodEyeKind[] = ['wallet', 'position', 'minter', 'savings', 'eq
 /** protocol address config keys -> kind, used for addresses the curated book does not know */
 const CONFIG_KINDS: [RegExp, GodEyeKind][] = [
 	[/streamer|saving/i, 'savings'],
-	[/bridge|module|vault|adapter/i, 'bridge'],
+	[/adapter|module|deployer/i, 'minter'],
+	[/bridge|vault/i, 'bridge'],
 	[/curve|router|pool|gauge/i, 'dex'],
-	[/deployer|curator|dao/i, 'minter'],
-	[/stable|multisig|delayed|distributor/i, 'contract'],
+	[/curator|dao|stable|multisig|delayed|distributor/i, 'contract'],
 ];
 
 /** module applications carry a free-text message, it tells what a module really is */
 const MODULE_KINDS: [RegExp, GodEyeKind][] = [
 	[/saving|streamer|reward/i, 'savings'],
+	[/adapter|module/i, 'minter'],
 	[/curve|pool|swap ?router|uniswap/i, 'dex'],
-	[/bridge|morpho|vault|termmax|adapter/i, 'bridge'],
+	[/bridge|morpho|vault|termmax/i, 'bridge'],
 ];
 
 /** a resolved label, null when the address is unknown */
