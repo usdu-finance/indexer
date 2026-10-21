@@ -1,10 +1,11 @@
 // @ts-nocheck -- hot loops over typed-array columns; the repo's noUncheckedIndexedAccess would need a non-null assertion on every index.
 // All database access lives in godeye.queries.ts, which is fully type checked.
 import { queryRecentTransfers, queryTransfers } from './godeye.queries';
-import { GodEyeLedgers, TokenLedger, ledgers as ledgerStore } from './godeye.ledger';
+import { COUNTERPART_SYMBOLS, GodEyeLedgers, TokenLedger, ledgers as ledgerStore } from './godeye.ledger';
 import { GodEyeLabels, labels as labelStore } from './godeye.labels';
 import {
 	GodEyeAddress,
+	GodEyeCounterpart,
 	GodEyeEdge,
 	GodEyeGraph,
 	GodEyeHolders,
@@ -398,6 +399,14 @@ export class GodEyeService {
 			e.count++;
 			e.last = l.ts[i];
 			if (l.via[i]) e.via = true;
+			if (l.cp[i]) {
+				const symbol = COUNTERPART_SYMBOLS[l.cp[i]];
+				const flows = (e.cp ??= []);
+				let f = flows.find((x) => x.symbol === symbol);
+				if (!f) flows.push((f = { symbol, amount: 0, count: 0 }));
+				f.amount += l.cpAmt[i];
+				f.count++;
+			}
 		}
 
 		const nodes: GodEyeNode[] = ids.map(nodeOf);
@@ -430,7 +439,7 @@ export class GodEyeService {
 		const edges: GodEyeEdge[] = [];
 		for (const e of edgeMap.values()) {
 			if (e.amount < minAmount) continue;
-			edges.push({ s: idOf(e.si)!, t: idOf(e.ti)!, amount: e.amount, count: e.count, first: e.first, last: e.last, via: e.via });
+			edges.push({ s: idOf(e.si)!, t: idOf(e.ti)!, amount: e.amount, count: e.count, first: e.first, last: e.last, via: e.via, cp: e.cp });
 		}
 		edges.sort((a, b) => b.amount - a.amount);
 
@@ -459,6 +468,7 @@ export class GodEyeService {
 		type Peer = { in: number; out: number; cin: number; cout: number; last: number };
 		const peers = new Map<number, Peer>();
 		const events: { t: number; b: number }[] = [];
+		const cps = new Map<number, GodEyeCounterpart>();
 		let bal = 0;
 		let inflow = 0;
 		let outflow = 0;
@@ -491,6 +501,20 @@ export class GodEyeService {
 				if (t === 0) burned += a;
 			}
 			p.last = l.ts[i];
+			if (l.cp[i] && id !== 0) {
+				// counted once per swap: the receiving leg of a mint (the module itself on its first leg), the paying leg of a burn
+				const v = l.via[i];
+				const paid = (v === 2 && t === id) || (v === 1 && f === 0 && t === id);
+				const received = (v === 1 && f === id) || (v === 2 && t === 0 && f === id);
+				if (paid || received) {
+					let c = cps.get(l.cp[i]);
+					if (!c) cps.set(l.cp[i], (c = { symbol: COUNTERPART_SYMBOLS[l.cp[i]], paid: 0, received: 0, count: 0, last: 0 }));
+					if (paid) c.paid += l.cpAmt[i];
+					else c.received += l.cpAmt[i];
+					c.count++;
+					c.last = l.ts[i];
+				}
+			}
 			txs++;
 			if (!first) first = l.ts[i];
 			lastTs = l.ts[i];
@@ -569,6 +593,7 @@ export class GodEyeService {
 			sources,
 			destinations,
 			origin,
+			counterparts: [...cps.values()].sort((a, b) => b.paid + b.received - (a.paid + a.received)),
 			recent: await this.recentTransfers(l, address),
 		};
 	}

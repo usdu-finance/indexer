@@ -48,7 +48,14 @@ export type GodEyeEdge = {
 	first: number;
 	last: number;
 	via?: boolean;
+	/** backing coin paid in / received out through a swap module on this edge (USDC -> USDU, ...) */
+	cp?: GodEyeCounterpartFlow[];
 };
+
+export type GodEyeCounterpartFlow = { symbol: string; amount: number; count: number };
+
+/** the counterpart coin of an address: paid = coin that went in to mint the stablecoin, received = coin that came out when burning it */
+export type GodEyeCounterpart = { symbol: string; paid: number; received: number; count: number; last: number };
 
 export type GodEyeKindStats = { kind: GodEyeKind; addresses: number; balance: number; inflow: number; outflow: number };
 
@@ -101,6 +108,7 @@ export type GodEyeAddress = {
 	sources: GodEyePeer[];
 	destinations: GodEyePeer[];
 	origin: GodEyeOrigin[];
+	counterparts: GodEyeCounterpart[];
 	recent: { txHash: string; t: number; from: string; to: string; amount: number }[];
 };
 

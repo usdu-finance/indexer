@@ -27,12 +27,28 @@ export const TRACKED: { chainId: number; token: string; symbol: string }[] = [
 ];
 export const DEFAULT_TOKEN = 'USDU';
 
+/**
+ * The backing coin a swap module trades the stablecoin against (USDC -> USDU, EURC -> EURU, ...), by module address.
+ * The coin itself is not mirrored as a ledger: the swap events carry its amount, which is attached to the mint/burn rows.
+ */
+export type Counterpart = { symbol: string; decimals: number };
+const COUNTERPARTS: [string, Counterpart][] = [
+	[A.usduSwapBridgeMorphoV1_steakUSDC_module, { symbol: 'USDC', decimals: 6 }],
+	[A.usduSwapBridgeMorphoV1_steakUSDT_module, { symbol: 'USDT', decimals: 6 }],
+	[A.euruSwapBridgeMorphoV1_steakEURC_module, { symbol: 'EURC', decimals: 6 }],
+	[A.euruSwapBridgeMorphoV1_dEURO_module, { symbol: 'dEURO', decimals: 18 }],
+	[A.chfuSwapBridgeMorphoV1_ZCHF_module, { symbol: 'ZCHF', decimals: 18 }],
+];
+const COUNTERPART_BY_MODULE = new Map(COUNTERPARTS.map(([a, c]) => [a.toLowerCase(), c]));
+/** counterpart ids stored per ledger row, 0 = none */
+export const COUNTERPART_SYMBOLS: string[] = ['', ...new Set(COUNTERPARTS.map(([, c]) => c.symbol))];
+
 const PAGE = 5000;
 /** max tx hashes per IN query */
 const IN_CHUNK = 1000;
 
 /** a module that caused (part of) the mints/burns of one transaction, with the stablecoin amounts it emitted */
-export type ModuleHit = { module: string; amounts: bigint[] };
+export type ModuleHit = { module: string; amounts: bigint[]; coins: bigint[] };
 
 const E18 = 1e18;
 /** a refresh is triggered by a request once the ledgers are older than this */
@@ -51,6 +67,9 @@ export class TokenLedger {
 	amt!: Float64Array;
 	/** 0 plain transfer, 1 first and 2 second leg of a mint/burn routed through a module (mint: zero -> module -> recipient, burn: payer -> module -> zero) */
 	via!: Uint8Array;
+	/** counterpart coin of a routed mint/burn (index into COUNTERPART_SYMBOLS, 0 = none) and its amount in whole coins */
+	cp!: Uint8Array;
+	cpAmt!: Float64Array;
 
 	lastCount = 0n;
 	/** indexer transfer counter we are syncing towards */
@@ -82,10 +101,12 @@ export class TokenLedger {
 		this.to = copy(this.to, Uint32Array);
 		this.amt = copy(this.amt, Float64Array);
 		this.via = copy(this.via, Uint8Array);
+		this.cp = copy(this.cp, Uint8Array);
+		this.cpAmt = copy(this.cpAmt, Float64Array);
 		this.cap = cap;
 	}
 
-	push(ts: number, from: number, to: number, amount: number, via = 0) {
+	push(ts: number, from: number, to: number, amount: number, via = 0, cp = 0, cpAmt = 0) {
 		if (this.n >= this.cap) this.grow(this.cap * 2);
 		const i = this.n++;
 		this.ts[i] = ts;
@@ -93,6 +114,8 @@ export class TokenLedger {
 		this.to[i] = to;
 		this.amt[i] = amount;
 		this.via[i] = via;
+		this.cp[i] = cp;
+		this.cpAmt[i] = cpAmt;
 		this.version++;
 	}
 
@@ -252,29 +275,33 @@ export class GodEyeLedgers {
 		const hits = new Map<string, ModuleHit[]>();
 		const hashes = [...new Set(items.filter((i) => i.from === ZERO || i.to === ZERO).map((i) => i.txHash.toLowerCase()))];
 		if (!hashes.length) return hits;
-		const add = (txHash: string, module: string, amounts: bigint[]) => {
+		const add = (txHash: string, module: string, amounts: bigint[], coins: bigint[]) => {
 			module = module.toLowerCase();
 			if (!this.registered.has(`${l.chainId}:${l.token}:${module}`)) return;
 			const key = txHash.toLowerCase();
 			const list = hits.get(key) ?? [];
 			const hit = list.find((h) => h.module === module);
-			if (hit) hit.amounts.push(...amounts);
-			else list.push({ module, amounts });
+			if (hit) {
+				hit.amounts.push(...amounts);
+				hit.coins.push(...coins);
+			} else list.push({ module, amounts, coins });
 			hits.set(key, list);
 		};
 		for (let i = 0; i < hashes.length; i += IN_CHUNK) {
 			const chunk = hashes.slice(i, i + IN_CHUNK) as `0x${string}`[];
 			const swaps = await db
-				.select({ module: SwapBridgeMorphoV1Swap.module, txHash: SwapBridgeMorphoV1Swap.txHash, kind: SwapBridgeMorphoV1Swap.kind, amountStable: SwapBridgeMorphoV1Swap.amountStable, fee: SwapBridgeMorphoV1Swap.fee })
+				.select({ module: SwapBridgeMorphoV1Swap.module, txHash: SwapBridgeMorphoV1Swap.txHash, kind: SwapBridgeMorphoV1Swap.kind, amountStable: SwapBridgeMorphoV1Swap.amountStable, amountCoin: SwapBridgeMorphoV1Swap.amountCoin, fee: SwapBridgeMorphoV1Swap.fee })
 				.from(SwapBridgeMorphoV1Swap)
 				.where(and(eq(SwapBridgeMorphoV1Swap.chainId, l.chainId), inArray(SwapBridgeMorphoV1Swap.txHash, chunk)));
-			// SwapIn mints (amount - fee) to the target and the fee to the curator, SwapOut burns the amount from the caller
-			for (const w of swaps) add(w.txHash, w.module, w.kind === 'SwapIn' ? [w.amountStable - w.fee, w.fee] : [w.amountStable]);
+			// SwapIn mints (amount - fee) to the target and the fee to the curator, SwapOut burns the amount from the caller;
+			// the coin amount is the counterpart of the (amount - fee) mint, resp. of the burn. The fee mint has none.
+			for (const w of swaps)
+				add(w.txHash, w.module, w.kind === 'SwapIn' ? [w.amountStable - w.fee, w.fee] : [w.amountStable], w.kind === 'SwapIn' ? [w.amountCoin, 0n] : [w.amountCoin]);
 			const revenue = await db
 				.select({ module: ModuleRevenueV1Revenue.module, txHash: ModuleRevenueV1Revenue.txHash, amount: ModuleRevenueV1Revenue.amount })
 				.from(ModuleRevenueV1Revenue)
 				.where(and(eq(ModuleRevenueV1Revenue.chainId, l.chainId), inArray(ModuleRevenueV1Revenue.txHash, chunk)));
-			for (const r of revenue) add(r.txHash, r.module, [r.amount]);
+			for (const r of revenue) add(r.txHash, r.module, [r.amount], [0n]);
 		}
 		return hits;
 	}
@@ -291,12 +318,17 @@ export class GodEyeLedgers {
 			const cands = it.txHash && (it.from === ZERO || it.to === ZERO) ? hits.get(it.txHash.toLowerCase()) : undefined;
 			const hit = cands && (cands.find((h) => h.amounts.includes(it.amount)) ?? cands[0]);
 			const m = hit ? this.idOf(hit.module) : 0;
+			// the coin paid/received for exactly this mint/burn, only when the amount matched a swap event of the module
+			const k = hit ? hit.amounts.indexOf(it.amount) : -1;
+			const coin = hit && k >= 0 ? COUNTERPART_BY_MODULE.get(hit.module) : undefined;
+			const coinAmt = coin && hit!.coins[k]! > 0n ? Number(hit!.coins[k]) / 10 ** coin.decimals : 0;
+			const cp = coinAmt > 0 ? COUNTERPART_SYMBOLS.indexOf(coin!.symbol) : 0;
 			if (hit && it.from === ZERO && it.to !== ZERO) {
-				l.push(ts, 0, m, amount, 1);
-				l.push(ts, m, this.idOf(it.to), amount, 2);
+				l.push(ts, 0, m, amount, 1, cp, coinAmt);
+				l.push(ts, m, this.idOf(it.to), amount, 2, cp, coinAmt);
 			} else if (hit && it.to === ZERO && it.from !== ZERO) {
-				l.push(ts, this.idOf(it.from), m, amount, 1);
-				l.push(ts, m, 0, amount, 2);
+				l.push(ts, this.idOf(it.from), m, amount, 1, cp, coinAmt);
+				l.push(ts, m, 0, amount, 2, cp, coinAmt);
 			} else {
 				l.push(ts, this.idOf(it.from), this.idOf(it.to), amount);
 			}
