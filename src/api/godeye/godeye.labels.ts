@@ -2,7 +2,7 @@ import { db } from 'ponder:api';
 import { StablecoinModuleMapping } from 'ponder:schema';
 import { ADDRESS } from '@usdu-finance/usdu-core';
 import { GodEyeAddressBookEntry, GodEyeKind, GodEyeLabel } from './godeye.types';
-import addressbook from './godeye.addressbook.json';
+import { ADDRESS_BOOK } from './godeye.addressbook';
 import { ZERO } from './godeye.ledger';
 
 /** kinds a curated entry may use ('mint' is the zero address, 'others' is the aggregated rest of the network) */
@@ -36,9 +36,9 @@ export class GodEyeLabels {
 		this.loadAddressBook();
 	}
 
-	/** curated entries from godeye.addressbook.json, invalid rows are skipped with a warning */
+	/** curated entries from godeye.addressbook.ts, invalid rows are skipped with a warning */
 	private loadAddressBook() {
-		for (const raw of addressbook as any[]) {
+		for (const raw of ADDRESS_BOOK as any[]) {
 			const address = String(raw?.address || '').toLowerCase();
 			const chainId = Number(raw?.chainId);
 			if (!/^0x[0-9a-f]{40}$/.test(address) || !Number.isInteger(chainId) || !raw?.label || !BOOK_KINDS.includes(raw?.kind)) {
