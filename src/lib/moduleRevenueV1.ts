@@ -2,7 +2,8 @@ import { Event, type Context } from 'ponder:registry';
 import { ModuleRevenueV1Daily, ModuleRevenueV1Revenue } from 'ponder:schema';
 import { Address } from 'viem';
 import { ModuleRevenueV1_ABI } from '@usdu-finance/usdu-core';
-import { normalizeAddress, timestampStartOfDay } from '../utils/format';
+import { normalizeAddress } from '../utils/format';
+import { snapshotTargets } from './dailySnapshot';
 
 export async function indexModuleRevenueV1Revenue(event: Event<'ModuleRevenueV1:Revenue'>, context: Context<'ModuleRevenueV1:Revenue'>) {
 	await context.db.insert(ModuleRevenueV1Revenue).values({
@@ -18,29 +19,34 @@ export async function indexModuleRevenueV1Revenue(event: Event<'ModuleRevenueV1:
 	});
 }
 
+/**
+ * Daily snapshot of every module: the row of a day is the state at the end of that utc day (see snapshotTargets), so the
+ * revenue of a day is the difference to the row before it.
+ */
 export async function indexModuleRevenueV1Daily(
 	event: Event<'ModuleRevenueV1Daily:block'>,
 	context: Context<'ModuleRevenueV1Daily:block'>,
 	modules: Address[]
 ) {
 	const chainId = context.chain.id;
-	const day = BigInt(timestampStartOfDay(Number(event.block.timestamp)));
 
-	for (const module of modules) {
-		// skip modules that are not deployed yet at this block
-		const code = await context.client.getCode({ address: module });
-		if (!code || code === '0x') continue;
+	for (const { day, blockNumber } of await snapshotTargets(event.block, context)) {
+		for (const module of modules) {
+			// skip modules that are not deployed yet at this block
+			const code = await context.client.getCode({ address: module, blockNumber });
+			if (!code || code === '0x') continue;
 
-		const [totalMinted, totalRevenue] = await Promise.all([
-			context.client.readContract({ abi: ModuleRevenueV1_ABI, address: module, functionName: 'totalMinted' }),
-			context.client.readContract({ abi: ModuleRevenueV1_ABI, address: module, functionName: 'totalRevenue' }),
-		]);
+			const [totalMinted, totalRevenue] = await Promise.all([
+				context.client.readContract({ abi: ModuleRevenueV1_ABI, address: module, functionName: 'totalMinted', blockNumber }),
+				context.client.readContract({ abi: ModuleRevenueV1_ABI, address: module, functionName: 'totalRevenue', blockNumber }),
+			]);
 
-		const row = { blockheight: event.block.number, totalMinted, totalRevenue };
+			const row = { blockheight: blockNumber, totalMinted, totalRevenue };
 
-		await context.db
-			.insert(ModuleRevenueV1Daily)
-			.values({ chainId, module: normalizeAddress(module), day, ...row })
-			.onConflictDoUpdate(row);
+			await context.db
+				.insert(ModuleRevenueV1Daily)
+				.values({ chainId, module: normalizeAddress(module), day, ...row })
+				.onConflictDoUpdate(row);
+		}
 	}
 }

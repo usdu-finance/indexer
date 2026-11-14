@@ -1,4 +1,5 @@
 import { createConfig } from 'ponder';
+import { DAILY_TICK_BLOCKS } from './src/lib/dailySnapshot';
 import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains';
 import { Chain, createPublicClient, erc20Abi, http } from 'viem';
 import {
@@ -188,21 +189,21 @@ export default createConfig({
 		},
 	},
 	blocks: {
-		// roughly daily at 12s blocks, snapshots are upserted per utc day
+		// hourly ticks (see lib/dailySnapshot.ts): the rows are aligned to utc midnight, not to the start block
 		ModuleRevenueV1Daily: {
 			chain: {
 				[mainnet.name]: {
 					startBlock: config[mainnet.id].startModuleRevenueV1,
-					interval: 7200,
+					interval: Number(DAILY_TICK_BLOCKS),
 				},
 			},
 		},
-		// roughly daily at 12s blocks, snapshots are upserted per utc day
+		// hourly ticks (see lib/dailySnapshot.ts): the rows are aligned to utc midnight, not to the start block
 		ERC4626Daily: {
 			chain: {
 				[mainnet.name]: {
 					startBlock: config[mainnet.id].startStreamerVaultV1,
-					interval: 7200,
+					interval: Number(DAILY_TICK_BLOCKS),
 				},
 			},
 		},
