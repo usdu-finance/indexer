@@ -1,7 +1,8 @@
 import { Event, type Context } from 'ponder:registry';
 import { ERC4626Daily, ERC4626History, ERC4626Position, ERC4626Status } from 'ponder:schema';
 import { Address, erc20Abi, parseAbi } from 'viem';
-import { normalizeAddress, timestampStartOfDay } from '../utils/format';
+import { normalizeAddress } from '../utils/format';
+import { snapshotTargets } from './dailySnapshot';
 
 const erc4626ReadAbi = parseAbi(['function totalAssets() view returns (uint256)']);
 
@@ -84,30 +85,35 @@ async function index(
 		}));
 }
 
+/**
+ * Daily snapshot of every vault: the row of a day is the state at the end of that utc day (see snapshotTargets), so the
+ * rewards of a day are the share price growth to the row before it.
+ */
 export async function indexERC4626Daily(event: Event<'ERC4626Daily:block'>, context: Context<'ERC4626Daily:block'>, vaults: Address[]) {
 	const chainId = context.chain.id;
-	const day = BigInt(timestampStartOfDay(Number(event.block.timestamp)));
 
-	for (const vault of vaults) {
-		// skip vaults that are not deployed yet at this block
-		const code = await context.client.getCode({ address: vault });
-		if (!code || code === '0x') continue;
+	for (const { day, blockNumber } of await snapshotTargets(event.block, context)) {
+		for (const vault of vaults) {
+			// skip vaults that are not deployed yet at this block
+			const code = await context.client.getCode({ address: vault, blockNumber });
+			if (!code || code === '0x') continue;
 
-		const [totalAssets, totalSupply] = await Promise.all([
-			context.client.readContract({ abi: erc4626ReadAbi, address: vault, functionName: 'totalAssets' }),
-			context.client.readContract({ abi: erc20Abi, address: vault, functionName: 'totalSupply' }),
-		]);
+			const [totalAssets, totalSupply] = await Promise.all([
+				context.client.readContract({ abi: erc4626ReadAbi, address: vault, functionName: 'totalAssets', blockNumber }),
+				context.client.readContract({ abi: erc20Abi, address: vault, functionName: 'totalSupply', blockNumber }),
+			]);
 
-		const row = {
-			blockheight: event.block.number,
-			totalAssets,
-			totalSupply,
-			price: totalSupply > 0n ? (totalAssets * 10n ** 18n) / totalSupply : 10n ** 18n,
-		};
+			const row = {
+				blockheight: blockNumber,
+				totalAssets,
+				totalSupply,
+				price: totalSupply > 0n ? (totalAssets * 10n ** 18n) / totalSupply : 10n ** 18n,
+			};
 
-		await context.db
-			.insert(ERC4626Daily)
-			.values({ chainId, vault: normalizeAddress(vault), day, ...row })
-			.onConflictDoUpdate(row);
+			await context.db
+				.insert(ERC4626Daily)
+				.values({ chainId, vault: normalizeAddress(vault), day, ...row })
+				.onConflictDoUpdate(row);
+		}
 	}
 }
