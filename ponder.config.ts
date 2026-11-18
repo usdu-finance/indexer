@@ -1,6 +1,6 @@
 import { createConfig } from 'ponder';
-// TODO: replace with the IModuleExpenseEventsV1_ABI export of '@usdu-finance/usdu-core' once it is published
-import { IModuleExpenseEventsV1_ABI } from './src/abis/IModuleExpenseEventsV1';
+// TODO: replace with the IModuleExpenseV1_ABI export of '@usdu-finance/usdu-core' once it is published
+import { IModuleExpenseV1_ABI } from './src/abis/IModuleExpenseV1';
 import { DAILY_TICK_BLOCKS } from './src/lib/dailySnapshot';
 import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains';
 import { Chain, createPublicClient, erc20Abi, http } from 'viem';
@@ -176,9 +176,9 @@ export default createConfig({
 				},
 			},
 		},
-		// every contract emitting the generalized Expense event (IModuleExpenseEventsV1)
+		// every contract emitting the generalized Expense event (IModuleExpenseV1)
 		ModuleExpenseV1: {
-			abi: IModuleExpenseEventsV1_ABI,
+			abi: IModuleExpenseV1_ABI,
 			chain: {
 				[mainnet.name]: {
 					address: [
