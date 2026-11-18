@@ -5,6 +5,7 @@ import { Chain, createPublicClient, erc20Abi, http } from 'viem';
 import {
 	ADDRESS,
 	IERC4626ABI,
+	IModuleExpenseV1_ABI,
 	ModuleRevenueV1_ABI,
 	StreamerVaultV1_ABI,
 	Stablecoin_ABI,
@@ -22,6 +23,7 @@ export const config = {
 		startUsdu: 22843900,
 		startStreamerVaultV1: 26167986, // first deployment (rUSDU)
 		startModuleRevenueV1: 25718487, // first deployment (USDU steakUSDC module)
+		startModuleExpenseV1: 26443069, // StreamerDepositorV1 deployment
 	},
 
 	// multichain support
@@ -169,6 +171,16 @@ export default createConfig({
 						ADDRESS[mainnet.id].chfuSwapBridgeMorphoV1_ZCHF_module,
 					],
 					startBlock: config[mainnet.id].startModuleRevenueV1,
+				},
+			},
+		},
+		// every contract emitting the generalized Expense event (IModuleExpenseV1)
+		ModuleExpenseV1: {
+			abi: IModuleExpenseV1_ABI,
+			chain: {
+				[mainnet.name]: {
+					address: [ADDRESS[mainnet.id].streamerDepositorV1],
+					startBlock: config[mainnet.id].startModuleExpenseV1,
 				},
 			},
 		},
