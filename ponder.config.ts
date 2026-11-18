@@ -1,12 +1,11 @@
 import { createConfig } from 'ponder';
-// TODO: replace with the IModuleExpenseV1_ABI export of '@usdu-finance/usdu-core' once it is published
-import { IModuleExpenseV1_ABI } from './src/abis/IModuleExpenseV1';
 import { DAILY_TICK_BLOCKS } from './src/lib/dailySnapshot';
 import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains';
 import { Chain, createPublicClient, erc20Abi, http } from 'viem';
 import {
 	ADDRESS,
 	IERC4626ABI,
+	IModuleExpenseV1_ABI,
 	ModuleRevenueV1_ABI,
 	StreamerVaultV1_ABI,
 	Stablecoin_ABI,
@@ -24,8 +23,7 @@ export const config = {
 		startUsdu: 22843900,
 		startStreamerVaultV1: 26167986, // first deployment (rUSDU)
 		startModuleRevenueV1: 25718487, // first deployment (USDU steakUSDC module)
-		// TODO: set to the StreamerDepositorV1 deployment block once deployed
-		startModuleExpenseV1: 26393680,
+		startModuleExpenseV1: 26443069, // StreamerDepositorV1 deployment
 	},
 
 	// multichain support
@@ -181,11 +179,7 @@ export default createConfig({
 			abi: IModuleExpenseV1_ABI,
 			chain: {
 				[mainnet.name]: {
-					address: [
-						// TODO: replace with ADDRESS[mainnet.id].streamerDepositorV1 from '@usdu-finance/usdu-core' once deployed
-						// and published, the zero address matches nothing until then
-						'0x0000000000000000000000000000000000000000',
-					],
+					address: [ADDRESS[mainnet.id].streamerDepositorV1],
 					startBlock: config[mainnet.id].startModuleExpenseV1,
 				},
 			},
