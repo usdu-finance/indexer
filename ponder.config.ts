@@ -1,4 +1,6 @@
 import { createConfig } from 'ponder';
+// TODO: replace with the IModuleExpenseEventsV1_ABI export of '@usdu-finance/usdu-core' once it is published
+import { IModuleExpenseEventsV1_ABI } from './src/abis/IModuleExpenseEventsV1';
 import { DAILY_TICK_BLOCKS } from './src/lib/dailySnapshot';
 import { arbitrum, base, mainnet, optimism, polygon } from 'viem/chains';
 import { Chain, createPublicClient, erc20Abi, http } from 'viem';
@@ -22,6 +24,8 @@ export const config = {
 		startUsdu: 22843900,
 		startStreamerVaultV1: 26167986, // first deployment (rUSDU)
 		startModuleRevenueV1: 25718487, // first deployment (USDU steakUSDC module)
+		// TODO: set to the StreamerDepositorV1 deployment block once deployed
+		startModuleExpenseV1: 26393680,
 	},
 
 	// multichain support
@@ -169,6 +173,20 @@ export default createConfig({
 						ADDRESS[mainnet.id].chfuSwapBridgeMorphoV1_ZCHF_module,
 					],
 					startBlock: config[mainnet.id].startModuleRevenueV1,
+				},
+			},
+		},
+		// every contract emitting the generalized Expense event (IModuleExpenseEventsV1)
+		ModuleExpenseV1: {
+			abi: IModuleExpenseEventsV1_ABI,
+			chain: {
+				[mainnet.name]: {
+					address: [
+						// TODO: replace with ADDRESS[mainnet.id].streamerDepositorV1 from '@usdu-finance/usdu-core' once deployed
+						// and published, the zero address matches nothing until then
+						'0x0000000000000000000000000000000000000000',
+					],
+					startBlock: config[mainnet.id].startModuleExpenseV1,
 				},
 			},
 		},
